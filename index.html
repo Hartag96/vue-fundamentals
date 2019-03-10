@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Shopping List App</title>
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <div id="shopping-list">
+            <h1>{{ `Vue is ready to party:  ${this.input}` }}</h1>
+            <input v-model="input">
+            <h5>{{ input !== '' ? input.toUpperCase() : '\x98\x92' }}</h5>
+        </div>
+
+        <script src="https://unpkg.com/vue"></script>
+        <script>
+            var shoppingList = new Vue({
+                el: '#shopping-list',
+                data: {
+                    input: '',
+                }
+            })
+        </script>
+    </body>
+</html>
