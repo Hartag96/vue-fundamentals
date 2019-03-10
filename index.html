@@ -7,13 +7,21 @@
     </head>
     <body>
         <div id="shopping-list">
-            <h1>{{ header.toUpperCase() }}</h1>
-            <div class="add-item-form">
-              <input v-model="newItem" type="text" placeholder="..." @keyup.enter="saveItem">
-              <button class="btn btn-primary" @click="saveItem">Save Item</button>
-            </div>
+          <div class="header">
+              <h1>{{ header.toUpperCase() }}</h1>
+              <button v-if="state == 'default'" class="btn btn-primary" @click="changeState('edit')"> Add Item</button>
+              <button v-else class="btn btn-cancel" @click="changeState('default')"> Cancel</button>
+          </div>
+          <div v-if="state == 'edit'" class="add-item-form">
+            <input v-model="newItem" type="text" placeholder="..." @keyup.enter="saveItem">
+            <p> {{ chaacterCount }}/200</p>
+            <button class="btn btn-primary" @click="saveItem" v-bind:disabled="newItem.length === 0">Save Item</button>
+          </div>
             <ul>
-              <li v-for="item in items">{{ item }}</li>
+              <!-- Object class notation -->
+              <!-- <li v-for="item in items" :class="{strikeout: item.purchased}">{{ item.label }}</li>  -->
+              <!-- Array class notation -->
+              <li v-for="item in reversedItems" @click="tooglePurchased(item)" :class="[item.purchased ? 'strikeout' : '', item.highPrority ? 'priority' : '']">{{ item.label }}</li>
             </ul>
         </div>
 
@@ -22,18 +30,50 @@
             var shoppingList = new Vue({
               el: '#shopping-list',
               data: {
+                state: 'default',
                 header: 'shopping list app',
                 newItem: '',
                 items: [
-                  '10 party hats',
-                  '2 board games',
-                  '20 cups'
+                  {
+                    label: '10 party hats',
+                    purchased: false,
+                    highPrority: false
+                  },
+                  {
+                    label: '2 board games',
+                    purchased: true,
+                    highPrority: false
+                  },
+                  {
+                    label: '20 cups',
+                    purchased: false,
+                    highPrority: true
+                  }
                 ]
               },
+              computed: {
+                chaacterCount() {
+                  return this.newItem.length;
+                },
+                reversedItems() {
+                  return this.items.slice(0).reverse();
+                }
+              },
               methods: {
-                saveItem: function () {
-                  this.newItem !== '' ? this.items.push(this.newItem) : null
+                saveItem: function() {
+                  this.items.push({
+                    label: this.newItem,
+                    purchased: false,
+                    highPrority: false
+                  })
                   this.newItem = '';
+                },
+                changeState: function(newState) {
+                  this.state = newState;
+                  this.newItem = '';
+                },
+                tooglePurchased: function(item) {
+                  item.purchased = !item.purchased
                 }
               }
             });
